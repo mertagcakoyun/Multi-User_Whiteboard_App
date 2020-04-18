@@ -1,21 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package computernetworkproject;
 
-/**
- *
- * @author mertagcakoyun <contact : mert.agcakoyun21@gmail.com>
- */
-public class ComputerNetworkProject {
+import java.io.IOException;
+import java.net.Socket;
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+
+public class ComputerNetworkProject
+{
+    public static void main( String args[] ) throws Exception
+    {
+        DrawFrame paintGui = new DrawFrame(); 
+    } 
+    private void start(String host, int port) throws IOException{
+        Socket socket = new Socket(host,port);
+        
     }
-    
 }
