@@ -28,7 +28,7 @@ public class TCPServer {
             while (!serverSocket.isClosed()) {
                 try {
                     Socket clientSocket = serverSocket.accept();
-                    System.out.println("Yeni bir client bağlandı : " + clientSocket);
+                    System.out.println("Yeni bir client bağlandı : " + clientSocket.getInetAddress());
                     new ListenThread(clientSocket).start();
                 } catch (IOException ex) {
                     System.out.println("Hata - new Thread() : " + ex);
@@ -50,6 +50,8 @@ public class TCPServer {
         private ObjectInputStream clientInput;
         private ObjectOutputStream clientOutput;
 
+        private DrawObject object;
+        private String hostIP;
         private ListenThread(Socket clientSocket) {
             this.clientSocket = clientSocket;
         }
@@ -61,19 +63,21 @@ public class TCPServer {
                 clientInput = new ObjectInputStream(clientSocket.getInputStream());
                 clientOutput = new ObjectOutputStream(clientSocket.getOutputStream());
                 allClients.add(clientOutput);
-
                 Object obj;
                 
                 while ((obj = clientInput.readObject()) != null) {
-
-                    // bütün client'lara gelen bu mesajı gönder
+                    object = (DrawObject) obj;
+                    hostIP = clientSocket.getInetAddress().toString();
+                    object.setFromClient(hostIP);
+                    
                     for (ObjectOutputStream out : allClients) {
                         if (out != clientSocket.getOutputStream()) {
-                            out.writeObject((DrawObject) obj);
+                            out.writeObject(object);
                         }
 
                     }
                 }
+                
 
             } catch (IOException | ClassNotFoundException ex) {
                 System.out.println(ex.getMessage());
