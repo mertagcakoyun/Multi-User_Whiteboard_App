@@ -13,6 +13,7 @@ import java.awt.GridLayout;
 import java.awt.FlowLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -56,7 +57,7 @@ public class DrawFrame extends JFrame
     private DefaultListModel<String> allowedListModel = new DefaultListModel<>();
     private ArrayList<String> allowedArrayList;
     private IpAddressValidator validator;
-    public DrawFrame()
+    public DrawFrame() throws IOException
     {
         super("Multi-User paint app");         
         JLabel statusLabel = new JLabel( "" );
