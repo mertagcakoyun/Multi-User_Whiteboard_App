@@ -129,7 +129,6 @@ public class DrawPanel extends JPanel {
             //mouse tiklama isi bitirilince degerlerimizi set ediyoruz
             currentShapeObject.setX2(event.getX());
             currentShapeObject.setY2(event.getY());
-//            System.out.println(currentShapeObject.getY2());               Mert Kapattı
             myShapes.addFront(currentShapeObject); //yarattigimiz degeri linkedlistimize ekliyoruz
             clearedShapes.makeEmpty();
             try {
@@ -173,29 +172,23 @@ public class DrawPanel extends JPanel {
                     if (mesaj instanceof DrawObject) {
                         for (String allowedHost : allowedHosts) {
                             if (((DrawObject) mesaj).getFromClient().equals(allowedHost)) {
-                                //TODO: izin verilen client ise, gelen draw object datası ile ilgili çizim işlemini yap
-                               
-                                // currentShape objesi myShapes LinkedListine eklenirken null pointer alınıyor. mouseReleased kısmında currentshape null atanmak zorunda olduğu için.
-                               
-                                // Yeni bir myShape Nesnesi oluşturulamıyor. draw metodu sıkıntı çıkarıyor. 
-                                // MyShape shape=new MyShape(((DrawObject) mesaj).x1, ((DrawObject) mesaj).y1, ((DrawObject) mesaj).x2, ((DrawObject) mesaj).y2, Color.BLUE);  Bu şekilde draw edilemiyor
-                                
-//                                DrawObject object = new DrawObject(((DrawObject) mesaj).x1, ((DrawObject) mesaj).y1, ((DrawObject) mesaj).x2, ((DrawObject) mesaj).y2,
-//                                        ((DrawObject) mesaj).color, ((DrawObject) mesaj).model, ((DrawObject) mesaj).isFill);   // mesajı cast etmemek için bir Draw objesi oluşturuldu. 
+                                // myShapes LinkedListine mesaj ile olusturulan nesneler özellikleriyle birlikte eklendi. Buradan alınan veriler Panellerde eşzamanlı çizilecek.
+                                switch (((DrawObject) mesaj).model) {
+                                    case 0:
+                                        currentShapeObject = new MyLine(((DrawObject) mesaj).x1, ((DrawObject) mesaj).x2,
+                                                ((DrawObject) mesaj).y1, ((DrawObject) mesaj).y2, Color.getColor(((DrawObject) mesaj).color));
+                                        break;
+                                    case 1:
+                                        currentShapeObject = new MyRectangle(((DrawObject) mesaj).x1, ((DrawObject) mesaj).x2,
+                                                ((DrawObject) mesaj).y1, ((DrawObject) mesaj).y2, Color.getColor(((DrawObject) mesaj).color), ((DrawObject) mesaj).isFill);
+                                        break;
+                                    case 2:
+                                        currentShapeObject = new MyOval(((DrawObject) mesaj).x1, ((DrawObject) mesaj).x2,
+                                                ((DrawObject) mesaj).y1, ((DrawObject) mesaj).y2, Color.getColor(((DrawObject) mesaj).color), ((DrawObject) mesaj).isFill);
+                                        break;
 
-                                System.out.println("x1 = " + ((DrawObject) mesaj).x1 + "    y1 =  " + ((DrawObject) mesaj).y1 + "    renk = " + ((DrawObject) mesaj).color.toString());
-                                
-                                
-                                currentShapeObject.setX1(((DrawObject) mesaj).x1);
-                                currentShapeObject.setY1(((DrawObject) mesaj).y1);
-                                currentShapeObject.setX2(((DrawObject) mesaj).x2);
-                                currentShapeObject.setY2(((DrawObject) mesaj).y2);
-                                currentShapeColor=Color.getColor(((DrawObject) mesaj).color);
-                                currentShapeType=((DrawObject) mesaj).model;
-                                
+                                }
                                 myShapes.addFront(currentShapeObject);
-//                                 
-                                System.out.println("x1 = " + ((DrawObject) mesaj).x1 + "    y1 =  " + ((DrawObject) mesaj).y1 + "    renk = " + ((DrawObject) mesaj).color + "ozellikleri Basarlılı");
                             }
                         }
 
