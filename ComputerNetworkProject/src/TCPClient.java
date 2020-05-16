@@ -88,7 +88,7 @@ public class TCPClient {
 
     public static void main(String[] args) {
         
-        DrawObject drawObj = new DrawObject(10, 15, 20, 25, "blue", 3);
+        DrawObject drawObj = new DrawObject(10, 15, 20, 25, "blue", 3,true);
         TCPClient client = new TCPClient();
         client.allowedHosts = new ArrayList<>();
         client.allowedHosts.add("/127.0.0.1");

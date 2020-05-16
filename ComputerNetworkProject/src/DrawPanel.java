@@ -55,7 +55,7 @@ public class DrawPanel extends JPanel {
         clientOutput = new ObjectOutputStream(clientSocket.getOutputStream());
         clientInput = new ObjectInputStream(clientSocket.getInputStream());
         allowedHosts = new ArrayList<>();
-        allowedHosts.add("/127.0.0.1");
+        allowedHosts.add("/127.0.0.1");                  ////
         clientThread = new ListenThread();
         clientThread.start();
     }
@@ -129,17 +129,16 @@ public class DrawPanel extends JPanel {
             //mouse tiklama isi bitirilince degerlerimizi set ediyoruz
             currentShapeObject.setX2(event.getX());
             currentShapeObject.setY2(event.getY());
-
+//            System.out.println(currentShapeObject.getY2());               Mert Kapattı
             myShapes.addFront(currentShapeObject); //yarattigimiz degeri linkedlistimize ekliyoruz
-
-            currentShapeObject = null; //ekledikten sonra temp datamızı null atayip yeni cizimi bekliyoruz
             clearedShapes.makeEmpty();
             try {
-                clientOutput.writeObject(new DrawObject(5, 5, 5,5, "blue", 1));
+                clientOutput.writeObject(new DrawObject(currentShapeObject.getX1(), currentShapeObject.getY1(), currentShapeObject.getX2(), currentShapeObject.getY2(), currentShapeColor.toString(), currentShapeType, currentShapeFilled));
             } catch (IOException ex) {
                 Logger.getLogger(DrawPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
             repaint();
+            currentShapeObject = null; //ekledikten sonra temp datamızı null atayip yeni cizimi bekliyoruz
 
         }
 
@@ -159,7 +158,8 @@ public class DrawPanel extends JPanel {
         }
 
     }
-        class ListenThread extends Thread {
+
+    class ListenThread extends Thread {
 
         // server'dan gelen mesajları dinle
         @Override
@@ -167,16 +167,35 @@ public class DrawPanel extends JPanel {
             try {
 
                 Object mesaj;
-                
+
                 while ((mesaj = clientInput.readObject()) != null) {
 
                     if (mesaj instanceof DrawObject) {
-
                         for (String allowedHost : allowedHosts) {
                             if (((DrawObject) mesaj).getFromClient().equals(allowedHost)) {
                                 //TODO: izin verilen client ise, gelen draw object datası ile ilgili çizim işlemini yap
+                               
+                                // currentShape objesi myShapes LinkedListine eklenirken null pointer alınıyor. mouseReleased kısmında currentshape null atanmak zorunda olduğu için.
+                               
+                                // Yeni bir myShape Nesnesi oluşturulamıyor. draw metodu sıkıntı çıkarıyor. 
+                                // MyShape shape=new MyShape(((DrawObject) mesaj).x1, ((DrawObject) mesaj).y1, ((DrawObject) mesaj).x2, ((DrawObject) mesaj).y2, Color.BLUE);  Bu şekilde draw edilemiyor
                                 
-                                System.out.println(((DrawObject) mesaj).color);
+//                                DrawObject object = new DrawObject(((DrawObject) mesaj).x1, ((DrawObject) mesaj).y1, ((DrawObject) mesaj).x2, ((DrawObject) mesaj).y2,
+//                                        ((DrawObject) mesaj).color, ((DrawObject) mesaj).model, ((DrawObject) mesaj).isFill);   // mesajı cast etmemek için bir Draw objesi oluşturuldu. 
+
+                                System.out.println("x1 = " + ((DrawObject) mesaj).x1 + "    y1 =  " + ((DrawObject) mesaj).y1 + "    renk = " + ((DrawObject) mesaj).color.toString());
+                                
+                                
+                                currentShapeObject.setX1(((DrawObject) mesaj).x1);
+                                currentShapeObject.setY1(((DrawObject) mesaj).y1);
+                                currentShapeObject.setX2(((DrawObject) mesaj).x2);
+                                currentShapeObject.setY2(((DrawObject) mesaj).y2);
+                                currentShapeColor=Color.getColor(((DrawObject) mesaj).color);
+                                currentShapeType=((DrawObject) mesaj).model;
+                                
+                                myShapes.addFront(currentShapeObject);
+//                                 
+                                System.out.println("x1 = " + ((DrawObject) mesaj).x1 + "    y1 =  " + ((DrawObject) mesaj).y1 + "    renk = " + ((DrawObject) mesaj).color + "ozellikleri Basarlılı");
                             }
                         }
 
