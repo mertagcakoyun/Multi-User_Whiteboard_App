@@ -55,7 +55,7 @@ public class DrawPanel extends JPanel {
         clientOutput = new ObjectOutputStream(clientSocket.getOutputStream());
         clientInput = new ObjectInputStream(clientSocket.getInputStream());
         allowedHosts = new ArrayList<>();
-        allowedHosts.add("/127.0.0.1");                  ////
+        allowedHosts.add("/127.0.0.1");                  ////we are adding local host for allowed list
         clientThread = new ListenThread();
         clientThread.start();
     }
@@ -132,7 +132,7 @@ public class DrawPanel extends JPanel {
             myShapes.addFront(currentShapeObject); //yarattigimiz degeri linkedlistimize ekliyoruz
             clearedShapes.makeEmpty();
             try {
-                clientOutput.writeObject(new DrawObject(currentShapeObject.getX1(), currentShapeObject.getY1(), currentShapeObject.getX2(), currentShapeObject.getY2(), currentShapeColor.toString(), currentShapeType, currentShapeFilled));
+                clientOutput.writeObject(new DrawObject(currentShapeObject.getX1(), currentShapeObject.getY1(), currentShapeObject.getX2(), currentShapeObject.getY2(), currentShapeColor, currentShapeType, currentShapeFilled));
             } catch (IOException ex) {
                 Logger.getLogger(DrawPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -176,15 +176,15 @@ public class DrawPanel extends JPanel {
                                 switch (((DrawObject) mesaj).model) {
                                     case 0:
                                         currentShapeObject = new MyLine(((DrawObject) mesaj).x1, ((DrawObject) mesaj).x2,
-                                                ((DrawObject) mesaj).y1, ((DrawObject) mesaj).y2, Color.getColor(((DrawObject) mesaj).color));
+                                                ((DrawObject) mesaj).y1, ((DrawObject) mesaj).y2, ((DrawObject) mesaj).color);
                                         break;
                                     case 1:
                                         currentShapeObject = new MyRectangle(((DrawObject) mesaj).x1, ((DrawObject) mesaj).x2,
-                                                ((DrawObject) mesaj).y1, ((DrawObject) mesaj).y2, Color.getColor(((DrawObject) mesaj).color), ((DrawObject) mesaj).isFill);
+                                                ((DrawObject) mesaj).y1, ((DrawObject) mesaj).y2, ((DrawObject) mesaj).color, ((DrawObject) mesaj).isFill);
                                         break;
                                     case 2:
                                         currentShapeObject = new MyOval(((DrawObject) mesaj).x1, ((DrawObject) mesaj).x2,
-                                                ((DrawObject) mesaj).y1, ((DrawObject) mesaj).y2, Color.getColor(((DrawObject) mesaj).color), ((DrawObject) mesaj).isFill);
+                                                ((DrawObject) mesaj).y1, ((DrawObject) mesaj).y2, ((DrawObject) mesaj).color, ((DrawObject) mesaj).isFill);
                                         break;
 
                                 }

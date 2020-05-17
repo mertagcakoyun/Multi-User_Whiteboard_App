@@ -20,7 +20,7 @@ public class IpAddressValidator {
  //65535
     private static final String IP_REGEXP
             = zeroTo255 + "\\." + zeroTo255 + "\\."
-            + zeroTo255 + "\\." + zeroTo255 + "\\:" + avaiblePorts;
+            + zeroTo255 + "\\." + zeroTo255 ;
  
     private static final Pattern IP_PATTERN
             = Pattern.compile(IP_REGEXP);

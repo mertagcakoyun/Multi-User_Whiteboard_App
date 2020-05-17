@@ -14,7 +14,6 @@ import java.awt.FlowLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -25,11 +24,6 @@ public class DrawFrame extends JFrame
 {
     private JLabel stausLabel; //mouse koordinatlari
     private DrawPanel panel;
-    
-    private JButton undo; 
-    private JButton redo;
-    private JButton clear; 
-    
     private JComboBox colors; 
     
     
@@ -55,22 +49,17 @@ public class DrawFrame extends JFrame
     private JButton addIPButton;
     private JButton deleteIPButton; 
     private DefaultListModel<String> allowedListModel = new DefaultListModel<>();
-    private ArrayList<String> allowedArrayList;
     private IpAddressValidator validator;
     public DrawFrame() throws IOException
     {
         super("Multi-User paint app");         
         JLabel statusLabel = new JLabel( "" );
         panel = new DrawPanel(statusLabel); 
-        undo = new JButton( "Undo" );
-        redo = new JButton( "Redo" );
-        clear = new JButton( "Clear" );
         //For connection and allowed lists -->  user components
         addIPButton = new JButton( "Add IP" );
         deleteIPButton = new JButton( "Delete IP" );
         allowedIPList = new JList<String>();
-        allowedIPList.setModel(allowedListModel);        
-        allowedArrayList = new ArrayList<>();
+        allowedIPList.setModel(allowedListModel);
         allowedIPText = new JTextField(" . . .  : ");
         validator = new IpAddressValidator();
         //end
@@ -83,9 +72,6 @@ public class DrawFrame extends JFrame
         widgetJPanel.setLayout( new GridLayout( 1, 6, 10, 5 ) );
         widgetPadder = new JPanel();
         widgetPadder.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 5));
-        widgetJPanel.add( undo );
-        widgetJPanel.add( redo );
-        widgetJPanel.add( clear );
         widgetJPanel.add( colors );
         widgetJPanel.add( shapes );                 
         widgetJPanel.add( filled );
@@ -101,9 +87,6 @@ public class DrawFrame extends JFrame
         add(usersJPanel, BorderLayout.EAST);
         allowedIPText.setPreferredSize( new Dimension( 75, 20 ) );
         ButtonHandler buttonHandler = new ButtonHandler();
-        undo.addActionListener( buttonHandler );
-        redo.addActionListener( buttonHandler );
-        clear.addActionListener( buttonHandler );
         addIPButton.addActionListener(buttonHandler);
         deleteIPButton.addActionListener(buttonHandler);
         ItemListenerHandler handler = new ItemListenerHandler();
@@ -122,18 +105,10 @@ public class DrawFrame extends JFrame
     {
         public void actionPerformed( ActionEvent event )
         {
-            if (event.getActionCommand().equals("Undo")){
-                panel.clearLastShape();
-            }
-            else if (event.getActionCommand().equals("Redo")){
-                panel.redoLastShape();
-            }
-            else if (event.getActionCommand().equals("Clear")){
-                panel.clearDrawing();
-            }
-            else if (event.getActionCommand().equals("Add IP")){
+            
+            if (event.getActionCommand().equals("Add IP")){
                 if (validator.isValid(allowedIPText.getText())) {
-                   allowedArrayList.add(allowedIPText.getText());
+                   panel.allowedHosts.add("/"+allowedIPText.getText());
                    allowedIPText.setText(" . . . ");
                    fillJList(); 
                 }else{
@@ -142,7 +117,7 @@ public class DrawFrame extends JFrame
                 
             }
             else if (event.getActionCommand().equals("Delete IP")){
-                allowedArrayList.remove(allowedIPList.getSelectedIndex());
+                panel.allowedHosts.remove(allowedIPList.getSelectedIndex());
                 fillJList();
             }
              
@@ -150,8 +125,8 @@ public class DrawFrame extends JFrame
 
         private void fillJList() {
             allowedListModel.removeAllElements();
-            for (int i = 0; i < allowedArrayList.size(); i++) {
-                allowedListModel.addElement(allowedArrayList.get(i));
+            for (int i = 0; i < panel.allowedHosts.size(); i++) {
+                allowedListModel.addElement(panel.allowedHosts.get(i));
             }
         }
     } 
